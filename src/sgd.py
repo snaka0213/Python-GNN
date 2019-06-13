@@ -4,6 +4,12 @@ import os, re, random
 import numpy as np
 from myClass import Theta
 from functions import grad_loss
+from hyperParameters import hyperParameters
+
+# hyperParameters
+T, D = hyperParameters.T, hyperParameters.D
+alpha, epsilon = hyperParameters.alpha, hyperParameters.epsilon
+moment = hyperParameters.moment
 
 # directory (train files)
 dir = os.getcwd() + '/train/'
@@ -11,12 +17,6 @@ dir = os.getcwd() + '/train/'
 # train graph_files
 files = [file for file in os.listdir(dir) if re.search('_graph.txt', file)]
 num_of_files = len(files)
-
-# hyper parameters
-T, D = 2, 8
-alpha = 0.0001 #learning rate
-epsilon = 0.001 #perturbation
-moment = 0.9 #moment
 
 # stochastic gradient descent (sgd)
 # Let b_files be a list of file_name of batchs, theta be learnable parameters.

@@ -2,7 +2,7 @@
 
 import os, re, random
 import numpy as np
-from myclass import Theta
+from myClass import Theta
 from functions import grad_loss
 from hyperParameters import hyperParameters
 

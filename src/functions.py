@@ -5,7 +5,7 @@ from myClass import Theta
 from readout import readout
 from hyperParameters import hyperParameters
 
-# hyper parameters
+# hyperParameters
 T, epsilon = hyperParameters.T, hyperParameters.epsilon
 
 # Let adj be the adjacency matrix of given graph G,

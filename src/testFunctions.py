@@ -2,8 +2,13 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from myclass import Case, Theta
+from myClass import Case, Theta
 from functions import loss, grad_loss
+from hyperParameters import hyperParameters
+
+# hyperParameters
+N, T, D = 10, 2, 2
+alpha, epsilon = hyperParameters.alpha, hyperParameters.epsilon
 
 # line_connected_matrix
 def line_connected_matrix(n):

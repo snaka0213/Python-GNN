@@ -1,0 +1,14 @@
+.
+├── LICENSE
+├── README.md
+└── src
+    ├── adam.py
+    ├── functions.py
+    ├── hyperParameters.py
+    ├── myClass.py
+    ├── readout.py
+    ├── sgd.py
+    ├── testAdam.py
+    ├── testFunctions.py
+    ├── testReadout.py
+    └── testSgd.py

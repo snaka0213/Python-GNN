@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import numpy as np
-from myclass import Case
+from myClass import Case
 from readout import readout
 
 # line_connected_matrix, the adjacency matrix of the following graph
@@ -13,7 +13,7 @@ def line_connected_matrix(n):
     return tmp + tmp.T
 
 # hyper parameters
-N, D, T = 10, 2, 2
+N, T, D = 10, 2, 2
 
 # testCase
 testCase = [

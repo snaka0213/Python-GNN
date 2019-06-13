@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 
-import os, re, random, copy, time
+import os, re, random, copy, time, sys
 import numpy as np
 import matplotlib.pyplot as plt
-from myclass import Theta
+from myClass import Theta
 from functions import loss, func_s
 from sgd import sgd, momentum_sgd
+from hyperParameters import hyperParameters
+
+# hyperParameters
+T, D = hyperParameters.T, hyperParameters.D
+batch_size = hyperParameters.batch_size
+num_of_epochs = hyperParameters.num_of_epochs
 
 # directory (train files)
 dir = os.getcwd() + '/train/'
@@ -13,9 +19,6 @@ dir = os.getcwd() + '/train/'
 # train graph_files
 files = [file for file in os.listdir(dir) if re.search('_graph.txt', file)]
 num_of_files = len(files)
-
-# hyper parameters
-T, D = 2, 8
 
 train_size = num_of_files//2
 valid_size = num_of_files - train_size
@@ -109,8 +112,15 @@ def main():
 
     # sgd
     # momentum_sgd
+    toolbar_width = train_size//batch_size # progress bar
     for i in range(num_of_epochs):
         tmp_train_files = copy.copy(train_files)
+
+        # progress bar (begin)
+        sys.stdout.write("Epoch {}: ".format(i+1))
+        sys.stdout.write("[%s]" % (" " * toolbar_width))
+        sys.stdout.flush()
+        sys.stdout.write("\b" * (toolbar_width+1))
 
         #an epoch
         for j in range(train_size//batch_size):
@@ -120,7 +130,13 @@ def main():
             #theta = sgd(batch_files, theta)
             theta, w = momentum_sgd(batch_files, theta, w)
 
-        print("Epoch {}: Done.".format(i+1))
+            # progress bar
+            sys.stdout.write("=")
+            sys.stdout.flush()
+
+        # progress bar (end)
+        sys.stdout.write("] Done.\n")
+
         loss_list_for_train.append(avg_loss(train_files, theta))
         loss_list_for_valid.append(avg_loss(valid_files, theta))
         accuracy_list_for_train.append(avg_accuracy(train_files, theta))

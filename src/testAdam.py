@@ -2,17 +2,17 @@
 
 import os, re, random, copy, time, sys
 import numpy as np
-import matplotlib.pyplot as plt
-from myClass import Theta
-from functions import func_s
-from adam import adam
-from hyperParameters import hyperParameters
+import matplotlib.pyplot as plt # for output generalization error graphs
+from myClass import Theta # for classifier's parameters
+from functions import func_s # for classifier
+from adam import adam # defines adam algorithm
+from hyperParameters import hyperParameters # defines hyperParameters
 
 # hyperParameters
-T, D = hyperParameters.T, hyperParameters.D
-alpha, epsilon = hyperParameters.alpha, hyperParameters.epsilon
-num_of_epochs = hyperParameters.num_of_epochs
-batch_size = hyperParameters.batch_size
+T               = hyperParameters.T
+D               = hyperParameters.D
+batch_size      = hyperParameters.batch_size
+num_of_epochs   = hyperParameters.num_of_epochs
 
 # directory
 dir = os.getcwd() + '/train/'
@@ -20,7 +20,9 @@ dir = os.getcwd() + '/train/'
 # train files
 files = [file for file in os.listdir(dir) if re.search('_graph.txt', file)]
 num_of_files = len(files)
-train_size = num_of_files
+
+train_size = num_of_files//2
+valid_size = num_of_files - train_size
 
 # normal_form_matrix
 # This is the (m, n) matrix whose elements are Gaussian normal.
@@ -102,37 +104,81 @@ def avg_accuracy(v_files, theta):
     return hit_counter/len(v_files)
 
 # main
-toolbar_width = train_size//batch_size # progress bar
-for i in range(num_of_epochs):
-    tmp_train_files = copy.copy(files)
+if __name__ == '__main__':
+    # output list
+    loss_list_for_train, loss_list_for_valid = [], []
+    accuracy_list_for_train, accuracy_list_for_valid = [], []
 
-    # progress bar (begin)
-    sys.stdout.write("Epoch {}: ".format(i+1))
-    sys.stdout.write("[%s]" % (" " * toolbar_width))
-    sys.stdout.flush()
-    sys.stdout.write("\b" * (toolbar_width+1))
+    # split the dataset to training dataset and validation dataset
+    train_files = random.sample(files, train_size)
+    valid_files = [x for x in files if x not in train_files]
 
-    #an epoch
-    for j in range(train_size//batch_size):
-        batch_files = random.sample(tmp_train_files, batch_size)
-        for file in batch_files:
-            tmp_train_files.remove(file)
-        theta, moment_1, moment_2 = adam(batch_files, theta, moment_1, moment_2)
+    # momentum_sgd
+    toolbar_width = train_size//batch_size # progress bar
+    for i in range(num_of_epochs):
+        tmp_train_files = copy.copy(train_files)
 
-        # progress bar
-        sys.stdout.write("=")
+        # progress bar (begin)
+        sys.stdout.write("Epoch {}: ".format(i+1))
+        sys.stdout.write("[%s]" % (" " * toolbar_width))
         sys.stdout.flush()
+        sys.stdout.write("\b" * (toolbar_width+1))
 
-    # progress bar (end)
-    sys.stdout.write("] Done.\n")
+        # an epoch
+        for j in range(train_size//batch_size):
+            batch_files = random.sample(tmp_train_files, batch_size)
+            for file in batch_files:
+                tmp_train_files.remove(file)
+            
+            theta, moment_1, moment_2 = adam(batch_files, theta, moment_1, moment_2)
 
-dir = os.getcwd() + '/test/'
-tests = [file for file in os.listdir(dir) if re.search('_graph.txt', file)]
-num_of_tests = len(tests)
+            # progress bar
+            sys.stdout.write("#")
+            sys.stdout.flush()
 
-file = open("prediction.txt", 'w')
-for i in range(num_of_tests):
-    graph_file = dir+'{}_graph.txt'.format(i)
-    file.write("{}\n".format(classifier(graph_file, theta)))
+        # progress bar (end)
+        sys.stdout.write("] Done.\n")
 
-file.close()
+        loss_list_for_train.append(avg_loss(train_files, theta))
+        loss_list_for_valid.append(avg_loss(valid_files, theta))
+        accuracy_list_for_train.append(avg_accuracy(train_files, theta))
+        accuracy_list_for_valid.append(avg_accuracy(valid_files, theta))
+
+    # plot graphs
+    title = "SGD loss on train_data"
+    title = "M " + title
+    list = loss_list_for_train
+    plt.subplot(2,2,1)
+    plt.title(title)
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.plot(range(num_of_epochs), list)
+
+    title = "SGD loss on valid_data"
+    title = "M " + title
+    list = loss_list_for_valid
+    plt.subplot(2,2,2)
+    plt.title(title)
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.plot(range(num_of_epochs), list)
+
+    title = "Accuracy on train_data"
+    list = accuracy_list_for_train
+    plt.subplot(2,2,3)
+    plt.title(title)
+    plt.xlabel("epoch")
+    plt.ylabel("accuracy")
+    plt.ylim(0,1)
+    plt.plot(range(num_of_epochs), list)
+
+    title = "Accuracy on valid_data"
+    list = accuracy_list_for_valid
+    plt.subplot(2,2,4)
+    plt.title(title)
+    plt.xlabel("epoch")
+    plt.ylabel("accuracy")
+    plt.ylim(0,1)
+    plt.plot(range(num_of_epochs), list)
+
+    plt.show()

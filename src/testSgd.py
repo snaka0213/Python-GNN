@@ -2,16 +2,17 @@
 
 import os, re, random, copy, time, sys
 import numpy as np
-import matplotlib.pyplot as plt
-from myClass import Theta
-from functions import loss, func_s
-from sgd import sgd, momentum_sgd
-from hyperParameters import hyperParameters
+import matplotlib.pyplot as plt # for output generalization error graphs
+from myClass import Theta # for classifier's parameters
+from functions import loss, func_s # for loss and classifier
+from sgd import sgd, momentum_sgd # defines sgd
+from hyperParameters import hyperParameters # defines hyperParameters
 
 # hyperParameters
-T, D = hyperParameters.T, hyperParameters.D
-batch_size = hyperParameters.batch_size
-num_of_epochs = hyperParameters.num_of_epochs
+T               = hyperParameters.T
+D               = hyperParameters.D
+batch_size      = hyperParameters.batch_size
+num_of_epochs   = hyperParameters.num_of_epochs
 
 # directory (train files)
 dir = os.getcwd() + '/train/'
@@ -98,20 +99,16 @@ def avg_accuracy(v_files, theta):
     return hit_counter/len(v_files)
 
 # main
-loss_list_for_train, loss_list_for_valid = [], []
-accuracy_list_for_train, accuracy_list_for_valid = [], []
-
-def main():
-    global theta, w
-    global loss_list_for_train, loss_list_for_valid
-    global accuracy_list_for_train, accuracy_list_for_valid
+if __name__ == '__main__':
+    # output list
+    loss_list_for_train, loss_list_for_valid = [], []
+    accuracy_list_for_train, accuracy_list_for_valid = [], []
 
     # split the dataset to training dataset and validation dataset
     train_files = random.sample(files, train_size)
     valid_files = [x for x in files if x not in train_files]
 
-    # sgd
-    # momentum_sgd
+    # sgd and momentum_sgd
     toolbar_width = train_size//batch_size # progress bar
     for i in range(num_of_epochs):
         tmp_train_files = copy.copy(train_files)
@@ -122,7 +119,7 @@ def main():
         sys.stdout.flush()
         sys.stdout.write("\b" * (toolbar_width+1))
 
-        #an epoch
+        # an epoch
         for j in range(train_size//batch_size):
             batch_files = random.sample(tmp_train_files, batch_size)
             for file in batch_files:
@@ -131,7 +128,7 @@ def main():
             theta, w = momentum_sgd(batch_files, theta, w)
 
             # progress bar
-            sys.stdout.write("=")
+            sys.stdout.write("#")
             sys.stdout.flush()
 
         # progress bar (end)
@@ -142,41 +139,41 @@ def main():
         accuracy_list_for_train.append(avg_accuracy(train_files, theta))
         accuracy_list_for_valid.append(avg_accuracy(valid_files, theta))
 
-main()
-title = "SGD loss on train_data"
-title = "M " + title
-list = loss_list_for_train
-plt.subplot(2,2,1)
-plt.title(title)
-plt.xlabel("epoch")
-plt.ylabel("loss")
-plt.plot(range(num_of_epochs), list)
+    # plot graphs
+    title = "SGD loss on train_data"
+    title = "M " + title
+    list = loss_list_for_train
+    plt.subplot(2,2,1)
+    plt.title(title)
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.plot(range(num_of_epochs), list)
 
-title = "SGD loss on valid_data"
-title = "M " + title
-list = loss_list_for_valid
-plt.subplot(2,2,2)
-plt.title(title)
-plt.xlabel("epoch")
-plt.ylabel("loss")
-plt.plot(range(num_of_epochs), list)
+    title = "SGD loss on valid_data"
+    title = "M " + title
+    list = loss_list_for_valid
+    plt.subplot(2,2,2)
+    plt.title(title)
+    plt.xlabel("epoch")
+    plt.ylabel("loss")
+    plt.plot(range(num_of_epochs), list)
 
-title = "Accuracy on train_data"
-list = accuracy_list_for_train
-plt.subplot(2,2,3)
-plt.title(title)
-plt.xlabel("epoch")
-plt.ylabel("accuracy")
-plt.ylim(0,1)
-plt.plot(range(num_of_epochs), list)
+    title = "Accuracy on train_data"
+    list = accuracy_list_for_train
+    plt.subplot(2,2,3)
+    plt.title(title)
+    plt.xlabel("epoch")
+    plt.ylabel("accuracy")
+    plt.ylim(0,1)
+    plt.plot(range(num_of_epochs), list)
 
-title = "Accuracy on valid_data"
-list = accuracy_list_for_valid
-plt.subplot(2,2,4)
-plt.title(title)
-plt.xlabel("epoch")
-plt.ylabel("accuracy")
-plt.ylim(0,1)
-plt.plot(range(num_of_epochs), list)
+    title = "Accuracy on valid_data"
+    list = accuracy_list_for_valid
+    plt.subplot(2,2,4)
+    plt.title(title)
+    plt.xlabel("epoch")
+    plt.ylabel("accuracy")
+    plt.ylim(0,1)
+    plt.plot(range(num_of_epochs), list)
 
-plt.show()
+    plt.show()

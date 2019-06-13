@@ -27,7 +27,7 @@ def func_s(adj, theta):
 # binary cross-entropy loss
 def loss(adj, y, theta):
     s = func_s(adj, theta)
-    if s < 700:
+    if s < 500:
         return y*np.log(1+np.exp(-s)) + (1-y)*np.log(1+np.exp(s))
     else:
         return y*np.log(1+np.exp(-s)) + (1-y)*s

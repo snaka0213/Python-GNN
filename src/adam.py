@@ -4,6 +4,15 @@ import os, re, random
 import numpy as np
 from myclass import Theta
 from functions import grad_loss
+from hyperParameters import hyperParameters
+
+# hyperParameters
+T, D = hyperParameters.T, hyperParameters.D
+alpha, epsilon = hyperParameters.alpha, hyperParameters.epsilon
+
+# for adam (https://arxiv.org/pdf/1412.6980.pdf)
+beta_1, beta_2 = 0.9, 0.999
+epsilon_hat = epsilon*np.sqrt(1-beta_2)
 
 # directory
 dir = os.getcwd() + '/train/'
@@ -11,14 +20,6 @@ dir = os.getcwd() + '/train/'
 # train files
 files = [file for file in os.listdir(dir) if re.search('_graph.txt', file)]
 num_of_files = len(files)
-
-# hyper parameters
-T, D = 2, 8
-alpha = 0.001
-beta_1 = 0.9
-beta_2 = 0.999
-epsilon = 1e-8
-epsilon_hat = epsilon*np.sqrt(1-beta_2)
 
 # unit theta
 theta_ones = Theta(

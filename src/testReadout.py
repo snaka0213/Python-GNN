@@ -2,7 +2,7 @@
 
 import numpy as np
 from myclass import Case
-from kadai_1 import readout
+from readout import readout
 
 # line_connected_matrix, the adjacency matrix of the following graph
 #   (1) - (2) - ... - (n).

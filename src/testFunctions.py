@@ -1,28 +1,26 @@
+#!/usr/bin/env python3
+
 import numpy as np
 import matplotlib.pyplot as plt
 from myclass import Case, Theta
-from kadai_2 import loss, grad_loss
+from functions import loss, grad_loss
 
-#line_connected_matrix
+# line_connected_matrix
 def line_connected_matrix(n):
     tmp = np.zeros((n,n), dtype = int)
     for i in range(n-1):
         tmp[i][i+1] = 1
     return tmp + tmp.T
 
-#normal_form_matrix
-#This is the (m, n) matrix whose elements are Gaussian normal.
+# normal_form_matrix
+# This is the (m, n) matrix whose elements are Gaussian normal.
 def normal_form_matrix(mu, sigma, m, n):
     if n == 1:
         return np.random.normal(loc = mu, scale = sigma, size = m).T
     else:
         return np.random.normal(loc = mu, scale = sigma, size = m*n).reshape((m,n))
 
-#hyper parameters
-N, D, T = 10, 2, 2
-alpha = 0.0001
-
-#testCase
+# testCase
 testCase = [
 Case(
     np.zeros((N,N), dtype = int),
@@ -44,7 +42,7 @@ Case(
     ),
 ]
 
-#main
+# main
 index = 0
 for case in testCase:
     index += 1

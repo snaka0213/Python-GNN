@@ -1,45 +1,46 @@
+#!/usr/bin/env python3
+
 import os, re, random, copy, time
 import numpy as np
 import matplotlib.pyplot as plt
 from myclass import Theta
-from kadai_2 import loss, func_s
-from kadai_3 import sgd, momentum_sgd
+from functions import loss, func_s
+from sgd import sgd, momentum_sgd
 
-#directory (train files)
+# directory (train files)
 dir = os.getcwd() + '/train/'
 
-#train graph_files
+# train graph_files
 files = [file for file in os.listdir(dir) if re.search('_graph.txt', file)]
 num_of_files = len(files)
 
-#hyper parameters
+# hyper parameters
 T, D = 2, 8
-batch_size = 100
+
 train_size = num_of_files//2
 valid_size = num_of_files - train_size
-num_of_epochs = 100
 
-#normal_form_matrix
-#This is the (m, n) matrix whose elements are Gaussian normal.
+# normal_form_matrix
+# This is the (m, n) matrix whose elements are Gaussian normal.
 def normal_form_matrix(mu, sigma, m, n):
     if n == 1:
         return np.random.normal(loc = mu, scale = sigma, size = m).T
     else:
         return np.random.normal(loc = mu, scale = sigma, size = m*n).reshape((m,n))
 
-#initialization
+# initialization
 theta = Theta(
     normal_form_matrix(0, 0.4, D, D),
     normal_form_matrix(0, 0.4, D, 1),
     0
-) #learnable parameters
+) # learnable parameters
 w = Theta(
     np.zeros((D,D)),
     np.zeros(D).T,
     0
-) #momentum
+) # momentum
 
-#classifier
+# classifier
 def classifier(graph_file, theta):
     file = open(dir+graph_file)
     N, adj = int(file.readline()), []
@@ -56,7 +57,7 @@ def classifier(graph_file, theta):
     else:
         return 0
 
-#average loss
+# average loss
 def avg_loss(b_files, theta):
     tmp_loss = 0
     batch_size = len(b_files)
@@ -78,7 +79,7 @@ def avg_loss(b_files, theta):
 
     return tmp_loss/batch_size
 
-#validation
+# validation
 def avg_accuracy(v_files, theta):
     hit_counter = 0
     for graph_file in v_files:
@@ -93,7 +94,7 @@ def avg_accuracy(v_files, theta):
 
     return hit_counter/len(v_files)
 
-#main
+# main
 loss_list_for_train, loss_list_for_valid = [], []
 accuracy_list_for_train, accuracy_list_for_valid = [], []
 
@@ -102,12 +103,12 @@ def main():
     global loss_list_for_train, loss_list_for_valid
     global accuracy_list_for_train, accuracy_list_for_valid
 
-    #split the dataset to training dataset and validation dataset
+    # split the dataset to training dataset and validation dataset
     train_files = random.sample(files, train_size)
     valid_files = [x for x in files if x not in train_files]
 
-    #sgd
-    #momentum_sgd
+    # sgd
+    # momentum_sgd
     for i in range(num_of_epochs):
         tmp_train_files = copy.copy(train_files)
 

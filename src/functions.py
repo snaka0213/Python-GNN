@@ -3,10 +3,10 @@
 import numpy as np
 from myClass import Theta
 from readout import readout
+from hyperParameters import hyperParameters
 
 # hyper parameters
-T = 2
-epsilon = 0.001
+T, epsilon = hyperParameters.T, hyperParameters.epsilon
 
 # Let adj be the adjacency matrix of given graph G,
 #  y be the label of G, W be a learnable matrix,
